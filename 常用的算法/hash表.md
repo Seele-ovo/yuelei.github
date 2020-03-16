@@ -6,4 +6,63 @@
     而当使用哈希表进行查询的时候，就是再次使用哈希函数将key转换为对应的数组下标，并定位到该空间获取value，如此一来，就可以充分利用到数组的定位性能进行数据定位。
   - 4.根据元素的一些特征把元素分配到不同的链表中去，也是根据这些特征，找到正确的链表，再从链表中找出这个元素。
    ![text](  https://github.com/Seele-ovo/yuelei.github/blob/master/IMG/erfen/20160603152646248.png)  
+   
+   ``` public class HashMAP {
+    //匿名内部类
+    private static class Node{
+        String key;
+        String value;
+        Node next;
+        public Node(String key, String value, Node next) {
+            this.key = key;
+            this.value = value;
+            this.next = next;
+        }
+    }
+    //暂时不考虑扩容问题
+    private Node[] nodeTable = new Node[1000];
+    private Node nodes(String key, String value){
+        return new Node(key,value,null);
+    }
+    public void put(String key, String value){
+        Node newNode = nodes(key, value);
+        //根据hash找到位置
+        int index = hash(key);
+        Node nextNode = null;
+        nextNode = nodeTable[index];
+        if (nextNode == null) {//说明在这个位置第一个直接放入
+            nodeTable[index] = newNode;
+        }else if (nextNode != null) {//说明有值了
+            while (true){
+                //找到最后一个位置连接上去
+                if (nextNode.next == null) {
+                    nextNode.next = newNode;
+                    break;
+                }
+                newNode = nextNode.next;
+
+            }
+        }
+    }
+    //根据键值获取对象
+    public String get(String key){
+        int hash = hash(key);
+        Node n = nodeTable[hash];
+        if (n.key == key) {
+            return n.value;
+        }else {
+            while (true){
+                if (n.key == key) {
+                    return n.value;
+                }
+                n = n.next;
+            }
+        }
+    }
+    //计算键的hash
+    private int hash(String key){
+        return key.hashCode() / 1000 % 100;
+    }
+}
+ ```
 
